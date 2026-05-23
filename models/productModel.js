@@ -22,11 +22,11 @@ const productSchema = new mongoose.Schema({
     trim: true,
     enum: {
       values: [
-        "reload products for Men",
-    "reload products for Women",
-    "reload products for Kids",
+        "reload products for men",
+    "reload products for women",
+    "reload products for kids",
     "reload specialty",
-    "reload platinum Plus"
+    "reload platinum plus"
       ],
     },
   },
