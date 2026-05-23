@@ -47,3 +47,8 @@ router.delete('/:id', authenticate, restrictToSeller, deleteProduct)
 router.get('/:id', getProductById) 
 
 module.exports = router;
+
+router.use((req, res, next) => {
+  console.log(`[ROUTER HIT] ${req.method} ${req.path}`);
+  next();
+});

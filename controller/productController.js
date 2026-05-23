@@ -238,7 +238,7 @@ const getProductById = async (req, res) => {
         }
         return res.status(200).json({
             ...product._doc,
-            category: product.category.toLowerCase() === 'clothes' ? 'clothing' : product.category.toLowerCase().replace(/ & /g, '-'),
+            category: product.category.toLowerCase() === 'Reload Products for Men' ? 'Reload Products for Men' : product.category.toLowerCase().replace(/ & /g, '-'),
         });
     } catch (error) {
         return res.status(500).json({ message: 'Internal Server Error', error: error.message });
