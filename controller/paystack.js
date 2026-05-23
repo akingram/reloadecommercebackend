@@ -203,7 +203,7 @@ const initializeTransaction = async (orderTotal, email, orderId, origin) => {
       payload,
       {
         headers: {
-          Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+          Authorization: `Bearer ${FLW_SECRET_KEY}`,
           "Content-Type": "application/json",
         },
       }
@@ -234,7 +234,7 @@ const verifyTransaction = async (transaction_id, orderId) => {
       `${FLUTTERWAVE_BASE_URL}/transactions/${transaction_id}/verify`,
       {
         headers: {
-          Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+          Authorization: `Bearer ${FLW_SECRET_KEY}`,
         },
       }
     );
