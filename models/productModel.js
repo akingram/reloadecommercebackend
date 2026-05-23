@@ -15,20 +15,27 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'Product price is required'],
   },
+  // category: {
+  //   type: String,
+  //   required: [true, 'Category is required'],
+  //   lowercase: true,
+  //   trim: true,
+  //   enum: {
+  //     values: [
+  //       "reload products for men",
+  //   "reload products for women",
+  //   "reload products for kids",
+  //   "reload specialty",
+  //   "reload platinum plus"
+  //     ],
+  //   },
+  // },
+
   category: {
     type: String,
     required: [true, 'Category is required'],
     lowercase: true,
     trim: true,
-    enum: {
-      values: [
-        "reload products for men",
-    "reload products for women",
-    "reload products for kids",
-    "reload specialty",
-    "reload platinum plus"
-      ],
-    },
   },
   images: [{ type: String }], 
   seller: {
