@@ -78,6 +78,24 @@ const orderSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    
+flutterwaveReference: {
+    type: String,
+    default: null
+},
+flutterwaveAuthorizationUrl: {
+    type: String,
+    default: null
+},
+flutterwaveTransactionId: {
+    type: String,
+    default: null
+},
+paymentConfirmedAt: {
+    type: Date,
+    default: null
+},
 });
+
 
 module.exports = mongoose.model('Order', orderSchema);

@@ -115,8 +115,10 @@ const createOrderAndInitializePayment = async (req, res) => {
         );
 
         // Update order with Paystack info
-        order.paystackReference = paystackRes.data.reference;
-        order.paystackAuthorizationUrl = paystackRes.data.authorization_url;
+        // order.paystackReference = paystackRes.data.reference;
+        // order.paystackAuthorizationUrl = paystackRes.data.authorization_url;
+        order.flutterwaveReference = paystackRes.data.tx_ref;
+order.flutterwaveAuthorizationUrl = paystackRes.data.link;
         await order.save();
 
         // Clear cart
@@ -142,30 +144,59 @@ const createOrderAndInitializePayment = async (req, res) => {
 };
 
 // 5. Verify Payment Webhook
+// const verifyPaymentWebhook = async (req, res) => {
+//     try {
+//         // Verify webhook signature
+//         const hash = crypto
+//             .createHmac("sha512", process.env.PAYSTACK_SECRET_KEY)
+//             .update(JSON.stringify(req.body))
+//             .digest("hex");
+
+//         if (hash !== req.headers["x-paystack-signature"]) {
+//             console.error("Invalid webhook signature");
+//             return res.status(401).json({ message: "Invalid signature" });
+//         }
+
+//         const { event, data } = req.body;
+
+//         if (event === "charge.success") {
+//             const { reference } = data;
+//             const order = await Order.findOne({
+//                 paystackReference: reference,
+//                 paymentStatus: "pending",
+//             });
+
+//             if (order) {
+//                 await verifyTransaction(reference, order._id);
+//             }
+//         }
+
+//         res.status(200).send("Webhook processed");
+//     } catch (error) {
+//         console.error("Webhook error:", error);
+//         res.status(500).json({ message: "Webhook processing failed" });
+//     }
+// };
+
 const verifyPaymentWebhook = async (req, res) => {
     try {
-        // Verify webhook signature
-        const hash = crypto
-            .createHmac("sha512", process.env.PAYSTACK_SECRET_KEY)
-            .update(JSON.stringify(req.body))
-            .digest("hex");
+        const secretHash = process.env.FLW_SECRET_HASH;
+        const signature = req.headers["verif-hash"];
 
-        if (hash !== req.headers["x-paystack-signature"]) {
-            console.error("Invalid webhook signature");
+        if (signature !== secretHash) {
             return res.status(401).json({ message: "Invalid signature" });
         }
 
         const { event, data } = req.body;
 
-        if (event === "charge.success") {
-            const { reference } = data;
+        if (event === "charge.completed" && data.status === "successful") {
             const order = await Order.findOne({
-                paystackReference: reference,
+                flutterwaveReference: data.tx_ref,
                 paymentStatus: "pending",
             });
 
             if (order) {
-                await verifyTransaction(reference, order._id);
+                await verifyTransaction(data.id, order._id);
             }
         }
 
@@ -177,10 +208,10 @@ const verifyPaymentWebhook = async (req, res) => {
 };
 
 
-
 const verifyPaymentManual = async (req, res) => {
     try {
-        const { reference, orderId } = req.query;
+        // const { reference, orderId } = req.query;
+        const { transaction_id, orderId } = req.query;
 
         if (!reference || !orderId) {
             return res.status(400).json({
@@ -196,8 +227,10 @@ const verifyPaymentManual = async (req, res) => {
                 message: "Invalid order ID format",
             });
         }
+        
+const order = await verifyTransaction(transaction_id, orderId);
 
-        const order = await verifyTransaction(reference, orderId);
+        // const order = await verifyTransaction(reference, orderId);
 
         // Populate product details for the order items
         const populatedOrder = await Order.findById(orderId)
